@@ -1,0 +1,4 @@
+
+git clone https://github.com/LuckyspotOgold/bullvsbear.git
+cd bullvsbear
+npm install framer-motion lucide-react
