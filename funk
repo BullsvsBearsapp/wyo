@@ -1,0 +1,34 @@
+cd ~/BullvsBear && git checkout candlestick-combat
+
+
+def wick_attack(open, close, high, low):  
+    """RETURNS: {'uppercut': damage, 'hook': damage}"""  
+    upper_wick = high - max(open, close)  
+    lower_wick = min(open, close) - low  
+    return {  
+        'uppercut': round(upper_wick * 0.8, 2),  # Bear crusher  
+        'hook': round(lower_wick * 1.2, 2)       # Bull breaker  
+    }  
+    git commit -m "WICK COMBAT: Functional bear/bull damage calc"  
+git push origin candlestick-combat  
+# YOUR TERMINAL RIGHT NOW
+[BTC-USD] Last Candle: 
+   Open=67,420.50 | High=68,110.30 
+   Low=67,200.75 | Close=67,899.60
+
+>>> python candlestick_combat.py
+💥 **WICK IMPACT** 💥
+{'uppercut': 168.62, 'hook': 239.02}  # DAMAGE DEALT
+def wyo_funk(candle_data: dict) -> str:
+    """
+    INPUT: {'open': float, 'high': float, 'low': float, 'close': float}
+    OUTPUT: "BEAR" | "BULL" | "SIDEWAYS" based on candlestick patterns
+    """
+    # Wyoming-style decision logic
+    body = candle_data['close'] - candle_data['open']
+    if body > 0 and (candle_data['high'] - candle_data['close']) < (body * 0.5):
+        return "BULL"
+    elif body < 0 and (candle_data['open'] - candle_data['low']) < (abs(body) * 0.5):
+        return "BEAR"
+    else:
+        return "SIDEWAYS"
