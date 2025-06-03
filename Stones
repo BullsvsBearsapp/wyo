@@ -1,0 +1,4 @@
+class STYRDToken:
+    def __init__(self):
+        self.supply = 1000000
+        self.holders = {"foundation": 500000}
