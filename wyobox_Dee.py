@@ -1,3 +1,22 @@
+# Tonight's task: Add DeepSeek to wyodee.py
+import os
+from openai import OpenAI
+
+class Dee:
+    def __init__(self):
+        self.client = OpenAI(
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url="https://api.deepseek.com/v1",
+        )
+    
+    def ask_deepseek(self, question):
+        response = self.client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[{"role": "user", "content": question}]
+        )
+        return response.choices[0].message.content
+
+# Then integrate into WyomingDee.handle_command()
 import time
 
 class Dee:
