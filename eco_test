@@ -1,0 +1,4 @@
+echo "LAST 5 MOVES:"
+tail -n 5 combat.log
+echo "WYOMING DAMAGE TEST:"
+python3 -c "from core.candlestick_combat import calculate_damage; print(calculate_damage(10))"
