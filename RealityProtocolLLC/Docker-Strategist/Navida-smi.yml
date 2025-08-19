@@ -37,3 +37,90 @@ curl -X POST http://localhost:8000/v1/completions \
     "prompt": "Explain quantum computing in simple terms",
     "max_tokens": 100
   }'
+  docker run --rm --gpus all nvidia/cuda:12.2.0-base nvidia-smi# Pre-download model manually
+docker run --rm -it \
+  -e HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN} \
+  -v vllm-cache:/root/.cache/huggingface \
+  pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime \
+  python -c "from transformers import AutoModel; AutoModel.from_pretrained('NousResearch/Hermes-2-Pro-Mistral-7B')"# Fix volume permissions
+docker run --rm -v vllm-cache:/data busybox chown -R 1000:1000 /dataversion: '3.8'
+
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
+    command: [
+      "--model", "NousResearch/Hermes-2-Pro-Mistral-7B",
+      "--tensor-parallel-size", "4",
+      "--gpu-memory-utilization", "0.95"
+    ]
+    resources:
+      limits:
+        memory: 120gservices:
+  vllm:
+    ...
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 4
+              capabilities: [gpu]
+
+
+version: '3.8'
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]--secret HUGGING_FACE_HUB_TOKEN--memory=120g --memory-swap=120g# Install vLLM from pip:
+pip install vllm
+
+class MarketSensorySystem:
+    def __init__(self, indicator: str):
+        self.indicator = indicator  # e.g., "RSI", "MACD"
+        self.animation_map = self._load_animation_map()
+        self.audio_map = self._load_audio_map()
+        self.vibration_map = self._load_vibration_map()
+
+    def convert_to_sensory_output(self, value: float):
+        return {
+            "animation": self.animation_map[self.indicator](value),
+            "audio": self.audio_map[self.indicator](value),  # 432Hz-based tones
+            "vibration": self.vibration_map[self.indicator](value)
+        }
+
+    # Example RSI mappings
+    def _load_animation_map(self):
+        return {
+            "RSI": lambda v: "boxer_uppercut" if v > 70 else "boxer_dodge",
+            "MACD": lambda v: "race_car_accel" if v > 0 else "race_car_brake"
+        }
+
+    def _load_audio_map(self):
+        return {
+            "RSI": lambda v: 432 + (v - 50),  # Frequency shifts with RSI
+            "MACD": lambda v: [432, 440, 480][int(v)]  # Chord progression
+        }
+
+    def _load_vibration_map(self):
+        return {
+            "RSI": lambda v: [0.2, 0.5, 0.8][min(2, int(v / 25))],  # Intensity tiers
+            "MACD": lambda v: "short-long-short" if v > 0 else "long-short-long"
+        }
