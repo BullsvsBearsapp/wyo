@@ -1,0 +1,24 @@
+```yaml
+version: '3.8'
+
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: 
+      - --model=NousResearch/Hermes-2-Pro-Mistral-7B
+      - --tensor-parallel-size=4
+      - --gpu-memory-utilization=0.95
+```
